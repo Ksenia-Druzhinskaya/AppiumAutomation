@@ -117,18 +117,10 @@ public class FirstTests
                 "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
                 15);
 
-        WebElement title_element = waitForElementPresent(
+        assertElementHasText(
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
-                "Cannot find article title.",
-                5);
-
-        String article_title = title_element.getText();
-
-        Assert.assertEquals(
-                "We see unexpected title description.",
                 "Java (programming language)",
-                article_title
-        );
+                "Article title is unexpected.");
     }
 
     @Test
@@ -158,6 +150,24 @@ public class FirstTests
                 By.id("org.wikipedia:id/search_close_btn"),
                 "Close button is still present on the page",
                 5);
+    }
+
+    @Test
+    public void testVerifyDefaultSearchText(){
+        waitForElementAndClick(
+                By.xpath("//*[@text='SKIP']"),
+                "Cannot find Skip button on Start page.",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search input to click.",
+                5);
+
+        assertElementHasText(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Search Wikipedia",
+                "Search default text is unexpected.");
     }
 
     private WebElement waitForElementPresent(By by, String errorMessage, long timeoutInSeconds){
@@ -192,5 +202,11 @@ public class FirstTests
         WebElement element = waitForElementPresent(by, errorMessage, timeoutInSeconds);
         element.clear();
         return element;
+    }
+
+    private void assertElementHasText(By by, String expectedText, String errorMessage){
+        WebElement element = waitForElementPresent(by, "Cannot find element.");
+        String actualText = element.getText();
+        Assert.assertEquals(errorMessage, expectedText, actualText);
     }
 }
