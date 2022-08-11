@@ -112,7 +112,7 @@ public class FirstTests
                 "Cannot find search input to send Keys.",
                 5);
 
-        assertListIsNotEmpty(
+        assertSeveralListItemsExist(
                 By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/*[@class='android.view.ViewGroup']"),
                 "Search result is empty.",
                 "Only one article is found.");
@@ -245,7 +245,7 @@ public class FirstTests
         Assert.assertEquals(errorMessage, expectedText, actualText);
     }
 
-    private void assertListIsNotEmpty(By by, String errorMessageForEmptyResults, String errorMessageForIncorrectItemNumber){
+    private void assertSeveralListItemsExist(By by, String errorMessageForEmptyResults, String errorMessageForIncorrectItemNumber){
         waitForElementPresent(by, errorMessageForEmptyResults);
         List foundElements = driver.findElements(by);
         Assert.assertTrue(errorMessageForIncorrectItemNumber, foundElements.size() > 1 );
