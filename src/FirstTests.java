@@ -129,6 +129,33 @@ public class FirstTests
     }
 
     @Test
+    public void testSearchResults(){
+        String searchCriteria = "Java";
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='SKIP']"),
+                "Cannot find Skip button on Start page.",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search input to click.",
+                5);
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                searchCriteria,
+                "Cannot find search input to send Keys.",
+                5);
+
+        assertListItemsContainSearchCriteria(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@resource-id='org.wikipedia:id/page_list_item_title']"),
+                searchCriteria,
+                "Search result is empty.",
+                "Incorrect Search result text.");
+    }
+
+    @Test
     public void testCompareArticleTitle()
     {
         waitForElementAndClick(
@@ -249,5 +276,13 @@ public class FirstTests
         waitForElementPresent(by, errorMessageForEmptyResults);
         List foundElements = driver.findElements(by);
         Assert.assertTrue(errorMessageForIncorrectItemNumber, foundElements.size() > 1 );
+    }
+
+    private void assertListItemsContainSearchCriteria(By by, String expectedText, String errorMessageForEmptyResults, String errorMessageForIncorrectItemText){
+        waitForElementPresent(by, errorMessageForEmptyResults);
+        List<WebElement> foundElements = driver.findElements(by);
+        foundElements.forEach(k -> Assert.assertTrue(
+                            errorMessageForIncorrectItemText + " '" + k.getText() + "' item does not contain '" + expectedText + "'.",
+                                    k.getText().contains(expectedText)));
     }
 }
