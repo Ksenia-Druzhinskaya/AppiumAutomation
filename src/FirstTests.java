@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
 
 import static java.lang.Thread.sleep;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
@@ -90,6 +91,40 @@ public class FirstTests
         waitForElementNotPresent(
                 By.id("org.wikipedia:id/search_close_btn"),
                 "Close button is still present on the page",
+                5);
+    }
+
+    @Test
+    public void testSearchAndClearSearch(){
+        waitForElementAndClick(
+                By.xpath("//*[@text='SKIP']"),
+                "Cannot find Skip button on Start page.",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search input to click.",
+                5);
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Java",
+                "Cannot find search input to send Keys.",
+                5);
+
+        assertListIsNotEmpty(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/*[@class='android.view.ViewGroup']"),
+                "Search result is empty.",
+                "Only one article is found.");
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Cannot find search field",
+                5);
+
+        waitForElementNotPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/*[@class='android.view.ViewGroup']"),
+                "Search result is not empty.",
                 5);
     }
 
@@ -208,5 +243,11 @@ public class FirstTests
         WebElement element = waitForElementPresent(by, "Cannot find element.");
         String actualText = element.getText();
         Assert.assertEquals(errorMessage, expectedText, actualText);
+    }
+
+    private void assertListIsNotEmpty(By by, String errorMessageForEmptyResults, String errorMessageForIncorrectItemNumber){
+        waitForElementPresent(by, errorMessageForEmptyResults);
+        List foundElements = driver.findElements(by);
+        Assert.assertTrue(errorMessageForIncorrectItemNumber, foundElements.size() > 1 );
     }
 }
