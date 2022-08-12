@@ -47,6 +47,7 @@ public class AdvancedTests extends TestBase
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
                 "Article title is not found");
 
+
         driver.rotate(ScreenOrientation.LANDSCAPE);
 
         String titleAfterRotation = waitForElementAndGetText(
@@ -54,7 +55,18 @@ public class AdvancedTests extends TestBase
                 "Article title is not found");
 
         Assert.assertEquals(
-                "Article title has been changed after screen rotation.",
+                "Article title has been changed after landscape screen rotation.",
+                titleBeforeRotation,
+                titleAfterRotation);
+
+        driver.rotate(ScreenOrientation.PORTRAIT);
+
+        titleAfterRotation = waitForElementAndGetText(
+                By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
+                "Article title is not found");
+
+        Assert.assertEquals(
+                "Article title has been changed after portrait screen rotation.",
                 titleBeforeRotation,
                 titleAfterRotation);
     }
