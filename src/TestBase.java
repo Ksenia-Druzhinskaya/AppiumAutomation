@@ -1,9 +1,11 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -78,6 +80,11 @@ public class TestBase
         Assert.assertEquals(errorMessage, expectedText, actualText);
     }
 
+    protected String waitForElementAndGetText(By by, String errorMessage){
+        WebElement element = waitForElementPresent(by, errorMessage);
+        return element.getText();
+    }
+
     protected void assertSeveralListItemsExist(By by, String errorMessageForEmptyResults, String errorMessageForIncorrectItemNumber){
         waitForElementPresent(by, errorMessageForEmptyResults);
         List foundElements = driver.findElements(by);
@@ -90,5 +97,59 @@ public class TestBase
         foundElements.forEach(k -> Assert.assertTrue(
                 errorMessageForIncorrectItemText + " '" + k.getText() + "' item does not contain '" + expectedText + "'.",
                 k.getText().contains(expectedText)));
+    }
+
+    protected void swipeUp(int timeOfSwipe){
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;                  // середина экрана по горизонтали
+        int start_y = (int)(size.height * 0.8);  // по вертикали 80% от верха
+        int end_y = (int)(size.height * 0.2);    // по вертикали 20% от верха
+
+        TouchAction action = new TouchAction(driver);
+        action
+                .press(x, start_y)
+                .waitAction(timeOfSwipe)
+                .moveTo(x, end_y)
+                .release()
+                .perform();
+    }
+
+    protected void swipeElementToLeft(By by, String errorMessage){
+        WebElement element = waitForElementPresent(
+                by,
+                errorMessage);
+
+        int left_x = element.getLocation().getX();
+        int right_x = left_x + element.getSize().getWidth();
+        int upper_y = element.getLocation().getY();
+        int lower_y = upper_y + element.getSize().getHeight();
+        int middle_y = (upper_y + lower_y) / 2;
+
+        TouchAction action = new TouchAction(driver);
+        action
+                .press(right_x, middle_y)
+                .waitAction(300)
+                .moveTo(left_x, middle_y)
+                .release()
+                .perform();
+    }
+
+    protected void swipeUpQuick(){
+        swipeUp(200);
+    }
+
+    protected void swipeUpToFindElement(By by, String errorMessage, int maxSwipes){
+
+        int alreadySwiped = 0;
+        while(driver.findElements(by).size() == 0){
+
+            if(alreadySwiped > maxSwipes){
+                waitForElementPresent(by, "Cannot find element by swiping up. \n" + errorMessage, 0);
+                return;
+            }
+
+            swipeUpQuick();
+            ++alreadySwiped;
+        }
     }
 }
