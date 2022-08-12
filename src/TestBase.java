@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -83,6 +84,16 @@ public class TestBase
     protected String waitForElementAndGetText(By by, String errorMessage){
         WebElement element = waitForElementPresent(by, errorMessage);
         return element.getText();
+    }
+
+    protected void assertElementPresent(By by, String errorMessage){
+        try
+        {
+            driver.findElement(by);
+        }
+        catch(NoSuchElementException exception){
+            throw new AssertionError(errorMessage + " " + exception.getMessage());
+        }
     }
 
     protected void assertSeveralListItemsExist(By by, String errorMessageForEmptyResults, String errorMessageForIncorrectItemNumber){

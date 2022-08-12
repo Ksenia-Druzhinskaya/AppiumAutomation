@@ -93,16 +93,16 @@ public class AdvancedTests extends TestBase
     @Test
     public void testSaveTwoArticlesAndDeleteOne() {
         String searchCriteria = "Java";
-        String firstActicleTitle = "Java (programming language)";
-        String secondActicleTitle = "JavaScript";
+        String firstArticleTitle = "Java (programming language)";
+        String secondArticleTitle = "JavaScript";
 
         // Open "Java (programming language)" article
         openArticle(
                 searchCriteria,
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + firstActicleTitle + "']"));
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + firstArticleTitle + "']"));
 
         // Save "Java (programming language)" article
-        saveArticle(firstActicleTitle);
+        saveArticle(firstArticleTitle);
 
         // Go back
         waitForElementAndClick(
@@ -112,12 +112,12 @@ public class AdvancedTests extends TestBase
 
         // Open "JavaScript" article
         waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + secondActicleTitle + "']"),
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + secondArticleTitle + "']"),
                 "Cannot find 'JavaScript' article after returning to article list.",
                 15);
 
         // Save "JavaScript" article
-        saveArticle(secondActicleTitle);
+        saveArticle(secondArticleTitle);
 
         // Go back
         waitForElementAndClick(
@@ -145,26 +145,56 @@ public class AdvancedTests extends TestBase
 
         // Delete "Java (programming language)" article from Saved
         swipeElementToLeft(
-                By.xpath("//*[@text='" + firstActicleTitle + "']"),
-                "Cannot find '" + firstActicleTitle + "'.");
+                By.xpath("//*[@text='" + firstArticleTitle + "']"),
+                "Cannot find '" + firstArticleTitle + "'.");
 
         // Verify that "Java (programming language)" article is deleted
         waitForElementNotPresent(
-                By.xpath("//*[@text='" + firstActicleTitle + "']"),
-                "The article '" + firstActicleTitle + "' was not deleted.",
+                By.xpath("//*[@text='" + firstArticleTitle + "']"),
+                "The article '" + firstArticleTitle + "' was not deleted.",
                 5);
 
         // Open "JavaScript" article
         waitForElementAndClick(
-                By.xpath("//*[@text='" + secondActicleTitle + "']"),
-                "The article '" + secondActicleTitle + "' is not present.",
+                By.xpath("//*[@text='" + secondArticleTitle + "']"),
+                "The article '" + secondArticleTitle + "' is not present.",
                 5);
 
         // Verify that the article has "JavaScript" title
         assertElementHasText(
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
-                secondActicleTitle,
+                secondArticleTitle,
                 "Article title is unexpected.");
+    }
+
+    @Test
+    public void testVerifyArticleTitlePresent(){
+        String searchCriteria = "Java";
+        String firstArticleTitle = "Java (programming language)";
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='SKIP']"),
+                "Cannot find Skip button on Start page.",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                "Cannot find search input to click.",
+                5);
+
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text,'Search Wikipedia')]"),
+                searchCriteria,
+                "Cannot find search input to send Keys.",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + firstArticleTitle + "']"),
+                "Cannot find '" + firstArticleTitle + "' article in search.",
+                15);
+
+        assertElementPresent(By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
+                "Article title is not present.");
     }
 
     private void openArticle(String searchCrteria, By byToClick){
