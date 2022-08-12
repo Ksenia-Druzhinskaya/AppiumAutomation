@@ -38,7 +38,7 @@ public class FirstTests extends TestBase
                 5);
 
         waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='Object-oriented programming language']"),
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='Java (programming language)']"),
                 "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
                 15);
     }
@@ -153,7 +153,7 @@ public class FirstTests extends TestBase
                 5);
 
         waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='Object-oriented programming language']"),
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='Java (programming language)']"),
                 "Cannot find 'Object-oriented programming language' topic searching by 'Java'",
                 15);
 

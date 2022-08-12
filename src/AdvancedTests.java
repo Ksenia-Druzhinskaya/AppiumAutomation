@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ScreenOrientation;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
@@ -89,6 +90,83 @@ public class AdvancedTests extends TestBase
                 5);
     }
 
+    @Test
+    public void testSaveTwoArticlesAndDeleteOne() {
+        String searchCriteria = "Java";
+        String firstActicleTitle = "Java (programming language)";
+        String secondActicleTitle = "JavaScript";
+
+        // Open "Java (programming language)" article
+        openArticle(
+                searchCriteria,
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + firstActicleTitle + "']"));
+
+        // Save "Java (programming language)" article
+        saveArticle(firstActicleTitle);
+
+        // Go back
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
+                "Cannot find Back button.",
+                5);
+
+        // Open "JavaScript" article
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_container']//*[@text='" + secondActicleTitle + "']"),
+                "Cannot find 'JavaScript' article after returning to article list.",
+                15);
+
+        // Save "JavaScript" article
+        saveArticle(secondActicleTitle);
+
+        // Go back
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
+                "Cannot find Back button.",
+                5);
+
+        // Go back
+        waitForElementAndClick(
+                By.xpath("//android.view.ViewGroup/*[contains(@class, 'ImageButton')]"),
+                "Cannot find Back button.",
+                5);
+
+        // Click "Saved" button
+        waitForElementAndClick(
+                By.xpath("//*[@text='Saved']"),
+                "Cannot find Saved button.",
+                5);
+
+        // Click "Saved 2 articles"
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[contains(@text, '2 articles')]"),
+                "Cannot find Saved for 2 articles page.",
+                5);
+
+        // Delete "Java (programming language)" article from Saved
+        swipeElementToLeft(
+                By.xpath("//*[@text='" + firstActicleTitle + "']"),
+                "Cannot find '" + firstActicleTitle + "'.");
+
+        // Verify that "Java (programming language)" article is deleted
+        waitForElementNotPresent(
+                By.xpath("//*[@text='" + firstActicleTitle + "']"),
+                "The article '" + firstActicleTitle + "' was not deleted.",
+                5);
+
+        // Open "JavaScript" article
+        waitForElementAndClick(
+                By.xpath("//*[@text='" + secondActicleTitle + "']"),
+                "The article '" + secondActicleTitle + "' is not present.",
+                5);
+
+        // Verify that the article has "JavaScript" title
+        assertElementHasText(
+                By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
+                secondActicleTitle,
+                "Article title is unexpected.");
+    }
+
     private void openArticle(String searchCrteria, By byToClick){
         waitForElementAndClick(
                 By.xpath("//*[@text='SKIP']"),
@@ -115,5 +193,18 @@ public class AdvancedTests extends TestBase
                 By.xpath("//*[@resource-id='pcs-edit-section-title-description']//preceding-sibling::*"),
                 "Cannot find article title",
                 15);
+    }
+
+    private void saveArticle(String articleTitle)
+    {
+        waitForElementAndClick(
+                By.xpath("//*[@text='Save']"),
+                "Cannot find Save button on Start page.",
+                5);
+
+        waitForElementPresent(
+                By.xpath("//*[contains(@text, 'Saved " + articleTitle + "')]"),
+                "Article '" + articleTitle + "' is not saved.",
+                5);
     }
 }
