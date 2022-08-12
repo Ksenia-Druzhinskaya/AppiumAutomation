@@ -17,30 +17,8 @@ import static java.lang.Thread.sleep;
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 
-public class FirstTests
+public class FirstTests extends TestBase
 {
-    private AppiumDriver driver;
-
-    @Before
-    public void setUp() throws Exception{
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-
-        capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "AndroidDevice");
-        capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("platformVersion", "8.0");
-        capabilities.setCapability("appPackage", "org.wikipedia");
-        capabilities.setCapability("appActivity", ".main.MainActivity");
-        capabilities.setCapability("app", "D:\\JavaAppiumAutomation\\apks\\org.wikipedia_50417_apps.evozi.com.apk");
-
-        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
-    }
-
-    @After
-    public void tearDown(){
-        driver.quit();
-    }
-
     @Test
     public void testSearchArticle(){
         waitForElementAndClick(
@@ -232,57 +210,4 @@ public class FirstTests
                 "Search default text is unexpected.");
     }
 
-    private WebElement waitForElementPresent(By by, String errorMessage, long timeoutInSeconds){
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
-        wait.withMessage(errorMessage + "\n");
-        return wait.until(presenceOfElementLocated(by));
-    }
-
-    private WebElement waitForElementPresent(By by, String errorMessage){
-        return waitForElementPresent(by, errorMessage, 5);
-    }
-
-    private WebElement waitForElementAndClick(By by, String errorMessage, long timeoutInSeconds){
-        WebElement element = waitForElementPresent(by, errorMessage, timeoutInSeconds);
-        element.click();
-        return element;
-    }
-
-    private WebElement waitForElementAndSendKeys(By by, String value, String errorMessage, long timeoutInSeconds){
-        WebElement element = waitForElementPresent(by, errorMessage, timeoutInSeconds);
-        element.sendKeys(value);
-        return element;
-    }
-
-    private boolean waitForElementNotPresent(By by, String errorMessage, long timeoutInSeconds){
-        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
-        wait.withMessage(errorMessage + "\n");
-        return wait.until(invisibilityOfElementLocated(by));
-    }
-
-    private WebElement waitForElementAndClear(By by, String errorMessage, long timeoutInSeconds){
-        WebElement element = waitForElementPresent(by, errorMessage, timeoutInSeconds);
-        element.clear();
-        return element;
-    }
-
-    private void assertElementHasText(By by, String expectedText, String errorMessage){
-        WebElement element = waitForElementPresent(by, "Cannot find element.");
-        String actualText = element.getText();
-        Assert.assertEquals(errorMessage, expectedText, actualText);
-    }
-
-    private void assertSeveralListItemsExist(By by, String errorMessageForEmptyResults, String errorMessageForIncorrectItemNumber){
-        waitForElementPresent(by, errorMessageForEmptyResults);
-        List foundElements = driver.findElements(by);
-        Assert.assertTrue(errorMessageForIncorrectItemNumber, foundElements.size() > 1 );
-    }
-
-    private void assertListItemsContainSearchCriteria(By by, String expectedText, String errorMessageForEmptyResults, String errorMessageForIncorrectItemText){
-        waitForElementPresent(by, errorMessageForEmptyResults);
-        List<WebElement> foundElements = driver.findElements(by);
-        foundElements.forEach(k -> Assert.assertTrue(
-                            errorMessageForIncorrectItemText + " '" + k.getText() + "' item does not contain '" + expectedText + "'.",
-                                    k.getText().contains(expectedText)));
-    }
 }
